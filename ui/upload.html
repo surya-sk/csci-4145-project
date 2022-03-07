@@ -1,3 +1,4 @@
+<!-- Code used from https://www.w3docs.com/learn-html/html-form-templates.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,21 +9,22 @@
 </head>
 
 <body>
-    <section id="hero" class="d-flex align-items-center">
-        <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
-          <h2>Choose a document to upload</h2>
-          <form action="/handleUpload" method="post" enctype="multipart/form-data" class="btn-upload" >
-            <input type="file" id="myFile" name="filename">
-          </form>
-          <br />
-          <h1>Preview</h1>
-          <br />
-          <form action="/handleUpload" method="post" enctype="multipart/form-data" class="btn-upload" >
-            <input type="submit" value="Upload"/>
-          </form>
-          <img src="assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
-        </div>
-    </section>
+  <div>
+    <form action="/handleUpload">
+      <div class="banner">
+        <h1>Upload your document</h1>
+      </div>
+      <div class="item">
+        <label for="name">Name<span>*</span></label>
+        <input id="name" type="text" name="name" required/>
+      </div>
+      <input type="file" value="Choose file" />
+      <div class="btn-block">
+        <button type="submit" href="/">SUBMIT</button>
+      </div>
+    </form>
+  </div>
+</body>
 
 </body>
 </html>
