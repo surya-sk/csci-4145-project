@@ -8,6 +8,17 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 
+<script>
+  // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
+  var loadFile = function(event) {
+    var preview = document.getElementById('preview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.onload = function() {
+      URL.revokeObjectURL(preview.src) // free memory
+    }
+  };
+</script>
+
 <body>
   <div>
     <form action="/handleUpload" method="post">
@@ -18,7 +29,8 @@
         <label for="name">Name<span>*</span></label>
         <input id="name" type="text" name="name" required/>
       </div>
-      <input type="file" value="Choose file" />
+      <input type="file" value="Choose file" onchange="loadFile(event)" />
+      <img id="preview" />
       <div class="btn-block">
         <button type="submit" href="/">SUBMIT</button>
       </div>
@@ -29,8 +41,6 @@
 </body>
 
 <style>
-  /* Code used from https://www.w3docs.com/learn-html/html-form-templates.html */
-
 .banner {
   position: relative;
   height: 300px;
