@@ -19,3 +19,17 @@ def verify_user(username, code):
         Username = username,
         ConfirmationCode = code
     )
+    print(response)
+
+def login_user(username, password):
+    client = boto3.client('cognito-idp', region_name='us-east-1')
+    response = client.initiate_auth(
+        ClientId='6603uqjecfj36n3r9r7pk5m9q',
+        AuthFlow='USER_PASSWORD_AUTH',
+        AuthParameters={
+            'USERNAME': username,
+            'PASSWORD': password
+        }
+    )
+    print(response)
+    return True
