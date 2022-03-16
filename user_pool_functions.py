@@ -32,4 +32,16 @@ def login_user(username, password):
         }
     )
     print(response)
-    return True
+
+    access_token = response['AuthenticationResult']['AccessToken']
+    response = client.get_user(
+        AccessToken=access_token
+    )
+    print(response)
+    print('Logged in!!!')
+    if response['Username'] == username:
+        return True
+    else:
+        return False
+
+#Abcdef123!
