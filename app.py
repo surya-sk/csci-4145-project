@@ -55,8 +55,6 @@ def verify():
     if form.validate_on_submit():
         code = form.code.data
         global user
-        print(code)
-        print(user)
         verify_user(user, code)
     return render_template('verify_signup.html', form=form)
 
@@ -69,6 +67,7 @@ def login():
         if login_user(username, password):
             global user
             user = username
+            return redirect(url_for('upload'))
     return render_template('login.html', form=form)
 
 
