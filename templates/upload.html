@@ -1,99 +1,20 @@
-<!-- Code used from https://www.w3docs.com/learn-html/html-form-templates.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Upload Page</title>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-    <link href="styles.css" rel="stylesheet">
-</head>
+{% block title %}
+Upload a Document
+{% endblock %}
 
-<script>
-  // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
-  var loadFile = function(event) {
-    var preview = document.getElementById('preview');
-    preview.src = URL.createObjectURL(event.target.files[0]);
-    preview.onload = function() {
-      URL.revokeObjectURL(preview.src) // free memory
-    }
-  };
-</script>
+{% block content %}
+<div class="container">
 
-<body>
-  <div>
-    <form action="/handleUpload" method="post">
-      <div class="banner">
-        <h1>Upload your document</h1>
-      </div>
-      <div class="item">
-        <label for="name">Name<span>*</span></label>
-        <input id="name" type="text" name="name" required/>
-      </div>
-      <input type="file" value="Choose file" onchange="loadFile(event)" />
-      <img id="preview" />
-      <div class="btn-block">
-        <button type="submit" href="/">SUBMIT</button>
-      </div>
-    </form>
-  </div>
-</body>
+  <form class="form-signin" method="POST" action="/upload">
+    <h2 class="form-signin-heading">Login</h2>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.filename) }}
+    {{ wtf.form_field(form.file) }}
+    <button class="btn btn-lg btn-primary btn-block" type="upload">Upload</button>
+  </form>
 
-</body>
-
-<style>
-.banner {
-  position: relative;
-  height: 300px;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-input, select, textarea {
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  }
-  input {
-  width: calc(100% - 10px);
-  padding: 5px;
-  }
-
-  textarea {
-    width: calc(100% - 12px);
-    padding: 5px;
-    }
-    .item:hover p, .item:hover i, .question:hover p, .question label:hover, input:hover::placeholder {
-    color: #cc7a00;
-    }
-    .item input:hover, .item select:hover, .item textarea:hover {
-    border: 1px solid transparent;
-    box-shadow: 0 0 3px 0 #cc7a00;
-    color: #cc7a00;
-    }
-    .item {
-    position: relative;
-    margin: 10px 0;
-    }
-    .item span {
-    color: red;
-    }
-
-    button {
-      width: 150px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px; 
-      background: #cc7a00;
-      font-size: 16px;
-      color: #fff;
-      cursor: pointer;
-      }
-
-      button:hover {
-      background: #ff9800;
-      }
-</style>
-</html>
+</div>
+{% endblock %}

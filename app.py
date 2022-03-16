@@ -1,7 +1,7 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, FileField
 from wtforms.validators import InputRequired, Email, Length
 
 from user_pool_functions import signup_user, verify_user, login_user
@@ -26,6 +26,10 @@ class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired()])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=50)])
 
+class UploadFileForm(FlaskForm):
+    filename = StringField('filename', validators=[InputRequired()])
+    file = FileField('file')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -45,9 +49,13 @@ def signup():
 
     return render_template('signup.html', form=form, variable=signedUp)
 
-@app.route('/upload')
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    return render_template('upload.html')
+    form = UploadFileForm()
+    file_name = form.filename.data
+    file = form.file.data
+    print(file)
+    return render_template('upload.html', form=form)
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
