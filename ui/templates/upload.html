@@ -21,7 +21,7 @@
 
 <body>
   <div>
-    <form action="/handleUpload" method="post">
+    <form action="/handleUpload" method="post" enctype="multipart/form-data">
       <div class="banner">
         <h1>Upload your document</h1>
       </div>
@@ -29,10 +29,10 @@
         <label for="name">Name<span>*</span></label>
         <input id="name" type="text" name="name" required/>
       </div>
-      <input type="file" value="Choose file" onchange="loadFile(event)" />
+      <input name="photo" type="file" value="Choose file" onchange="loadFile(event)" />
       <img id="preview" />
       <div class="btn-block">
-        <button type="submit" href="/">SUBMIT</button>
+        <button type="submit" href="/handleUpload">SUBMIT</button>
       </div>
     </form>
   </div>
