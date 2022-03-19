@@ -7,26 +7,24 @@ Upload a Document
 
 {% block content %}
 <div class="container">
-
-  <form class="form-signin" method="POST" action="/handleUpload">
+  <script>
+    // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
+    var loadFile = function(event) {
+      var preview = document.getElementById('preview');
+      preview.src = URL.createObjectURL(event.target.files[0]);
+      preview.onload = function() {
+        URL.revokeObjectURL(preview.src) // free memory
+      }
+    };
+  </script>
+  <form class="form-signin" action="/upload" method="post" enctype="multipart/form-data">
     <h2 class="form-signin-heading">Login</h2>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.filename) }}
     <input name="photo" type="file" value="Choose file" onchange="loadFile(event)" />
-    <img id="preview"
-    <button href="/handleUpload" class="btn btn-lg btn-primary btn-block" type="submit">Upload</button>
+    <img id="preview" />
+    <button href="/upload" class="btn btn-lg btn-primary btn-block" type="submit">Upload</button>
   </form>
 
 </div>
 {% endblock %}
-
-<script>
-  // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
-  var loadFile = function(event) {
-    var preview = document.getElementById('preview');
-    preview.src = URL.createObjectURL(event.target.files[0]);
-    preview.onload = function() {
-      URL.revokeObjectURL(preview.src) // free memory
-    }
-  };
-</script>

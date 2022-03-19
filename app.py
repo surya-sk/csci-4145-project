@@ -3,6 +3,9 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, FileField
 from wtforms.validators import InputRequired, Email, Length
+import os
+import boto3
+import textract_wrapper
 
 from user_pool_functions import signup_user, verify_user, login_user
 
@@ -52,9 +55,24 @@ def signup():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     form = UploadFileForm()
-    file_name = form.filename.data
-    file = form.file.data
-    print(file)
+    print(request.files.to_dict(flat=False))
+    if 'photo' in request.files:
+        photo = request.files['photo']
+        if photo.filename != '':
+            filename = os.path.join("C:/Users/surya/OneDrive/Desktop", "pic.jpg")
+            photo.save(filename)
+            session = boto3.Session(
+                aws_access_key_id="ASIAXL2JPQZPPQY23EGL",
+                aws_secret_access_key="vwhSeW5VNNphCrSzCN6dw24SbfVDVrHaQlKWsJB5",
+                aws_session_token="FwoGZXIvYXdzEHMaDPWrjtUT9+h+LUA/mSLAAXs0ysYHkSEKxwlu3uPJ37XqoTEGrwxrPX/mZ2i8r+UTN8yLrMxkYmSEXuF6bAtYrx7hbJa0jDwOE2lv16RYUK0QiQFc3qWdSt5weUVO+KqUi6hgSGcJDCdBbPIFhinDSL6qvoZH5LgXU1cKlyV9clPaKBrkFkiV/yVFEpiYEiL8uGyWEiP5wRVn57lwO13S25rshSXH25XIg7qDh//O5LeoP7etD9bWwzNfRfezzOTZD/Wnb7mLEHHC2mjfnKcvPSicrNiRBjIt8LVwFT6W2AQBKqGYmj1os33W1wwGyUBDKj5k+aDYCLNecr5McqvziZRxh8v1",
+                region_name='us-east-1'
+                )
+            client = session.client('textract')
+            textract = textract_wrapper.TextractWrapper(client, None, None)
+            response = textract.detect_file_text(document_file_name=filename)
+            for item in response['Blocks']:
+                if item["BlockType"] == "LINE":
+                    print('\033[92m' + item['Text'] + '\033[92m')
     return render_template('upload.html', form=form)
 
 @app.route('/verify', methods=['GET', 'POST'])
