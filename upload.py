@@ -1,12 +1,12 @@
 from fileinput import filename
+from flask_bootstrap import Bootstrap
 import os
 import boto3
 from flask import Flask, request, render_template, url_for, redirect
-import sys
-sys.path.append('../csci-4145-project')
 import textract_wrapper
 
 app = Flask(__name__)
+Bootstrap(app)
 
 @app.route("/")
 def showUploadPage():
@@ -18,8 +18,8 @@ def handleFileUpload():
     if 'photo' in request.files:
         photo = request.files['photo']
         if photo.filename != '':
-            photo.save(os.path.join("C:/Users/surya/OneDrive/Desktop", "pic.jpg"))
             filename = os.path.join("C:/Users/surya/OneDrive/Desktop", "pic.jpg")
+            photo.save(filename)
             session = boto3.Session(
                 aws_access_key_id="ASIAXL2JPQZPFCR5F3VF",
                 aws_secret_access_key="GX/v0sWSISHgTRv4a/GJNcf+1R2htliF25P91GHG",

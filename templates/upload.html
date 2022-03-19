@@ -8,13 +8,25 @@ Upload a Document
 {% block content %}
 <div class="container">
 
-  <form class="form-signin" method="POST" action="/upload">
+  <form class="form-signin" method="POST" action="/handleUpload">
     <h2 class="form-signin-heading">Login</h2>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.filename) }}
-    {{ wtf.form_field(form.file) }}
-    <button class="btn btn-lg btn-primary btn-block" type="upload">Upload</button>
+    <input name="photo" type="file" value="Choose file" onchange="loadFile(event)" />
+    <img id="preview"
+    <button href="/handleUpload" class="btn btn-lg btn-primary btn-block" type="submit">Upload</button>
   </form>
 
 </div>
 {% endblock %}
+
+<script>
+  // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
+  var loadFile = function(event) {
+    var preview = document.getElementById('preview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    preview.onload = function() {
+      URL.revokeObjectURL(preview.src) // free memory
+    }
+  };
+</script>
