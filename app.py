@@ -6,6 +6,7 @@ from wtforms.validators import InputRequired, Email, Length
 import os
 import boto3
 import textract_wrapper
+from s3_functions import upload_file
 
 from user_pool_functions import signup_user, verify_user, login_user
 
@@ -55,24 +56,33 @@ def signup():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     form = UploadFileForm()
+    file_name = form.filename.data
+    file_name = str(file_name)
+
+    global user
+    mkdir = 'photos/' + user
+    if not os.path.exists(mkdir):
+        os.makedirs(mkdir)
     print(request.files.to_dict(flat=False))
     if 'photo' in request.files:
         photo = request.files['photo']
         if photo.filename != '':
-            filename = os.path.join("C:/Users/surya/OneDrive/Desktop", "pic.jpg")
-            photo.save(filename)
+            file_name = './photos/' + user + '/' + file_name + '.jpg'
+            photo.save(file_name)
             session = boto3.Session(
-                aws_access_key_id="ASIAXL2JPQZPPQY23EGL",
-                aws_secret_access_key="vwhSeW5VNNphCrSzCN6dw24SbfVDVrHaQlKWsJB5",
-                aws_session_token="FwoGZXIvYXdzEHMaDPWrjtUT9+h+LUA/mSLAAXs0ysYHkSEKxwlu3uPJ37XqoTEGrwxrPX/mZ2i8r+UTN8yLrMxkYmSEXuF6bAtYrx7hbJa0jDwOE2lv16RYUK0QiQFc3qWdSt5weUVO+KqUi6hgSGcJDCdBbPIFhinDSL6qvoZH5LgXU1cKlyV9clPaKBrkFkiV/yVFEpiYEiL8uGyWEiP5wRVn57lwO13S25rshSXH25XIg7qDh//O5LeoP7etD9bWwzNfRfezzOTZD/Wnb7mLEHHC2mjfnKcvPSicrNiRBjIt8LVwFT6W2AQBKqGYmj1os33W1wwGyUBDKj5k+aDYCLNecr5McqvziZRxh8v1",
+                aws_access_key_id="ASIAXL2JPQZPE6GC2BXA",
+                aws_secret_access_key="zXJbluvVqaNQ+flvEsveWTnyhSFqUi1hCC1RlP9J",
+                aws_session_token="FwoGZXIvYXdzENH//////////wEaDLtcNupZxgkt6ivKyCLAAbUV9pxZ+/tlqzHkl07iLmm+w/5qKvS0rb7JjJjb/5JK/9kHY0ZFewf7tWea39fuB6OwZKEhSF6CDgMXsnGMv2O1p3qySOdriJ7ub2lRPxvdP8o9d8CWmaNdzVzn6Vt0w2O+5doGwkJIBcIO1Odvik8TFN63DMoifQLZyN5ZUbQFDgyOXhyX9qDbydkRihdT/WQ3OwMkqg0ghtPjCzq9NA2hVLAb8tRUKHjseRvMQ3rO1lghEWUby34eaulbPVR8Wiik/OyRBjIt1YP8CoC+HMfSKCVC1BLRLrGP2OiKH7PQMrHCUDApK0bO+K6Il4AW2iqyUAER",
                 region_name='us-east-1'
                 )
             client = session.client('textract')
             textract = textract_wrapper.TextractWrapper(client, None, None)
-            response = textract.detect_file_text(document_file_name=filename)
-            for item in response['Blocks']:
-                if item["BlockType"] == "LINE":
-                    print('\033[92m' + item['Text'] + '\033[92m')
+            response = textract.detect_file_text(document_file_name=file_name)
+            #for item in response['Blocks']:
+            #    if item["BlockType"] == "LINE":
+            #        print('\033[92m' + item['Text'] + '\033[92m')
+            blocks = response['Blocks']
+            upload_file(user, file_name, blocks, str(form.filename.data))
     return render_template('upload.html', form=form)
 
 @app.route('/verify', methods=['GET', 'POST'])
