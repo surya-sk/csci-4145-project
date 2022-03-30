@@ -7,12 +7,17 @@ import os
 import boto3
 import textract_wrapper
 from s3_functions import upload_file
+import json
 
 from user_pool_functions import signup_user, verify_user, login_user
 
 app = Flask(__name__)
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'SeCrEtKeY'
+
+AWS_ACCESS_KEY = ""
+AWS_SECRET_KEY = ""
+AWS_SESSION_TOKEN = ""
 
 user = ''
 signedUp = False
@@ -70,9 +75,9 @@ def upload():
             file_name = './photos/' + user + '/' + file_name + '.jpg'
             photo.save(file_name)
             session = boto3.Session(
-                aws_access_key_id="ASIAXL2JPQZPE6GC2BXA",
-                aws_secret_access_key="zXJbluvVqaNQ+flvEsveWTnyhSFqUi1hCC1RlP9J",
-                aws_session_token="FwoGZXIvYXdzENH//////////wEaDLtcNupZxgkt6ivKyCLAAbUV9pxZ+/tlqzHkl07iLmm+w/5qKvS0rb7JjJjb/5JK/9kHY0ZFewf7tWea39fuB6OwZKEhSF6CDgMXsnGMv2O1p3qySOdriJ7ub2lRPxvdP8o9d8CWmaNdzVzn6Vt0w2O+5doGwkJIBcIO1Odvik8TFN63DMoifQLZyN5ZUbQFDgyOXhyX9qDbydkRihdT/WQ3OwMkqg0ghtPjCzq9NA2hVLAb8tRUKHjseRvMQ3rO1lghEWUby34eaulbPVR8Wiik/OyRBjIt1YP8CoC+HMfSKCVC1BLRLrGP2OiKH7PQMrHCUDApK0bO+K6Il4AW2iqyUAER",
+                aws_access_key_id=AWS_ACCESS_KEY,
+                aws_secret_access_key=AWS_SECRET_KEY,
+                aws_session_token=AWS_SESSION_TOKEN,
                 region_name='us-east-1'
                 )
             client = session.client('textract')
@@ -108,4 +113,10 @@ def login():
 
 
 if __name__ == '__main__':
+    with open("credentials.json") as f:
+        creds_json = json.load(f)
+    AWS_ACCESS_KEY = creds_json['access_key']
+    AWS_SECRET_KEY = creds_json['secret_key']
+    AWS_SESSION_TOKEN = creds_json['session_token']
+    print(AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_SESSION_TOKEN)
     app.run(debug=True)
