@@ -118,5 +118,4 @@ if __name__ == '__main__':
     AWS_ACCESS_KEY = creds_json['access_key']
     AWS_SECRET_KEY = creds_json['secret_key']
     AWS_SESSION_TOKEN = creds_json['session_token']
-    print(AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_SESSION_TOKEN)
     app.run(debug=True)
