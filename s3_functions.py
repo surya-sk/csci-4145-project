@@ -20,7 +20,6 @@ def upload_file(username, file_name, blocks, folder_name):
 def get_files(username):
     client = boto3.client('s3', aws_access_key_id=access_key,
                           aws_secret_access_key=secret_key)
-
     bucket = '4145project'
     prefix = username + '/'
     result = client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
@@ -33,3 +32,11 @@ def get_files(username):
         if folderName not in files:
             files.append(folderName)
     return files
+
+def getS3File(username, file):
+    client = boto3.client('s3', aws_access_key_id=access_key,
+                          aws_secret_access_key=secret_key)
+    bucket = '4145project'
+    prefix = username + '/'
+    file_name = './photos/' + username + '/' + 'image' + '.jpg'
+    client.download_file(Bucket=bucket, Filename=file_name, Key=prefix + file + '/image')

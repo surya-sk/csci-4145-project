@@ -6,7 +6,7 @@ from wtforms.validators import InputRequired, Email, Length
 import os
 import boto3
 import textract_wrapper
-from s3_functions import upload_file, get_files
+from s3_functions import upload_file, get_files, getS3File
 import json
 
 from user_pool_functions import signup_user, verify_user, login_user
@@ -97,8 +97,9 @@ def upload():
 @app.route('/showFile', methods=['GET', 'POST'])
 def show_file():
     file = request.args.get('file')
-    print(file)
-    return render_template('show_file.html')
+    global user
+    image = getS3File(user, file)
+    return render_template('show_file.html', image=image)
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
