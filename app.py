@@ -6,7 +6,7 @@ from wtforms.validators import InputRequired, Email, Length
 import os
 import boto3
 import textract_wrapper
-from s3_functions import upload_file
+from s3_functions import upload_file, get_files
 import json
 
 from user_pool_functions import signup_user, verify_user, login_user
@@ -60,15 +60,19 @@ def signup():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    global user
+    file_list = []
+    if request.method == 'GET':
+        file_list = get_files(user)
+
     form = UploadFileForm()
     file_name = form.filename.data
     file_name = str(file_name)
 
-    global user
     mkdir = 'photos/' + user
     if not os.path.exists(mkdir):
         os.makedirs(mkdir)
-    print(request.files.to_dict(flat=False))
+
     if 'photo' in request.files:
         photo = request.files['photo']
         if photo.filename != '':
@@ -88,7 +92,13 @@ def upload():
             #        print('\033[92m' + item['Text'] + '\033[92m')
             blocks = response['Blocks']
             upload_file(user, file_name, blocks, str(form.filename.data))
-    return render_template('upload.html', form=form)
+    return render_template('upload.html', form=form, file_list=file_list)
+
+@app.route('/showFile', methods=['GET', 'POST'])
+def show_file():
+    file = request.args.get('file')
+    print(file)
+    return render_template('show_file.html')
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():

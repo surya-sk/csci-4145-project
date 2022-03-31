@@ -1,11 +1,20 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}
-Upload a Document
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
 {% endblock %}
 
 {% block content %}
+
+<div class="container">
+    <h2 class="form-signin-heading">Files</h2>
+        {% for file in file_list %}
+            <li><a href="{{ url_for('show_file', file=file)}}"> {{ file }} </a></li>
+        {% endfor %}
+</div>>
+
 <div class="container">
   <script>
     // https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
@@ -17,8 +26,9 @@ Upload a Document
       }
     };
   </script>
+
   <form class="form-signin" action="/upload" method="post" enctype="multipart/form-data">
-    <h2 class="form-signin-heading">Login</h2>
+    <h2 class="form-signin-heading">Upload</h2>
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.filename) }}
     <input name="photo" type="file" value="Choose file" onchange="loadFile(event)" />

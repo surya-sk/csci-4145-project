@@ -16,3 +16,20 @@ def upload_file(username, file_name, blocks, folder_name):
     file_key = username + '/' + folder_name + '/textractObj'
     response = client.put_object(Bucket=bucket, Key=file_key, Body=(bytes(json.dumps(blocks).encode('UTF-8'))))
     print(response)
+
+def get_files(username):
+    client = boto3.client('s3', aws_access_key_id=access_key,
+                          aws_secret_access_key=secret_key)
+
+    bucket = '4145project'
+    prefix = username + '/'
+    result = client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+    files = []
+    for document in result:
+        docName = str(document['Key'])
+        docName = docName.replace(prefix, '')
+        folderName = docName.split('/')
+        folderName = folderName[0]
+        if folderName not in files:
+            files.append(folderName)
+    return files
