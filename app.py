@@ -8,6 +8,7 @@ import boto3
 import textract_wrapper
 from s3_functions import upload_file, get_files, getS3File
 import json
+from PIL import Image
 
 from user_pool_functions import signup_user, verify_user, login_user
 
@@ -76,8 +77,10 @@ def upload():
     if 'photo' in request.files:
         photo = request.files['photo']
         if photo.filename != '':
+            image = Image.open(photo.filename)
+            image.convert("RGB")
             file_name = './photos/' + user + '/' + file_name + '.jpg'
-            photo.save(file_name)
+            image.save(file_name)
             session = boto3.Session(
                 aws_access_key_id=AWS_ACCESS_KEY,
                 aws_secret_access_key=AWS_SECRET_KEY,
@@ -121,6 +124,7 @@ def login():
             user = username
             return redirect(url_for('upload'))
     return render_template('login.html', form=form)
+
 
 
 if __name__ == '__main__':
