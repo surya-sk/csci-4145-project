@@ -77,7 +77,7 @@ def upload():
     if 'photo' in request.files:
         photo = request.files['photo']
         if photo.filename != '':
-            image = Image.open(photo.filename)
+            image = Image.open(photo)
             image.convert("RGB")
             file_name = './photos/' + user + '/' + file_name + '.jpg'
             image.save(file_name)
