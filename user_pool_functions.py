@@ -8,7 +8,6 @@ def signup_user(email, username, password):
         Password = password,
         UserAttributes = [{'Name': 'email', 'Value': email}]
     )
-    print(response)
     # return true if no error false otherwise
     return True
 
@@ -19,7 +18,6 @@ def verify_user(username, code):
         Username = username,
         ConfirmationCode = code
     )
-    print(response)
 
 def login_user(username, password):
     client = boto3.client('cognito-idp', region_name='us-east-1')
@@ -31,14 +29,11 @@ def login_user(username, password):
             'PASSWORD': password
         }
     )
-    print(response)
 
     access_token = response['AuthenticationResult']['AccessToken']
     response = client.get_user(
         AccessToken=access_token
     )
-    print(response)
-    print('Logged in!!!')
     if response['Username'] == username:
         return True
     else:

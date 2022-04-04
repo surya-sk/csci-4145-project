@@ -97,12 +97,16 @@ def upload():
             upload_file(user, file_name, blocks, str(form.filename.data))
     return render_template('upload.html', form=form, file_list=file_list)
 
-@app.route('/showFile', methods=['GET', 'POST'])
+@app.route('/showFile', methods=['GET'])
 def show_file():
     file = request.args.get('file')
     global user
-    image = getS3File(user, file)
-    return render_template('show_file.html', image=image)
+    getS3File(user, file)
+        # from os.path import exists
+        # path = 'static/photos/' + user + '/image.jpg'
+        # file_exists = exists(path)
+        # if file_exists:
+    return render_template('show_file.html', user=user)
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
