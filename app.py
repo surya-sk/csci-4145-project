@@ -101,12 +101,12 @@ def upload():
 def show_file():
     file = request.args.get('file')
     global user
-    getS3File(user, file)
+    textract_object = getS3File(user, file)
         # from os.path import exists
         # path = 'static/photos/' + user + '/image.jpg'
         # file_exists = exists(path)
         # if file_exists:
-    return render_template('show_file.html', user=user)
+    return render_template('show_file.html', user=user, textract_object=textract_object)
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():

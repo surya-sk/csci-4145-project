@@ -38,6 +38,14 @@ def get_files(username):
 
 def getS3File(username, file):
     s3_client = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key, region_name='us-east-1')
-
     response = s3_client.download_file(Bucket='4145project', Key=username + '/' + file + '/image', Filename= 'static/' + username + 'image.jpg')
+
+    textract_obj = s3_client.get_object(Bucket='4145project', Key=username + '/' + file + '/textractObj')
+    textract_obj = json.loads(textract_obj['Body'].read().decode('utf-8'))
+    del textract_obj[0]   # the first element describes the size of the page. This is not relevant to our application
+    for element in textract_obj:
+        print(element)
+        print(element['Text'])
+
+    return textract_obj
 

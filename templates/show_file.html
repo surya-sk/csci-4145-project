@@ -2,7 +2,16 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-<div class="container">
-<img src = {{ '../static/' + user + 'image.jpg' }} />
-</div>>
+    <div class="container">
+        <img src = {{ '../static/' + user + 'image.jpg' }} width="50%" height="50%"/>
+    </div>
+
+    <h1 class="form-signin-heading">Textract Blocks Detected</h1>
+
+    <div class="container">
+        {% for word in textract_object %}
+            <h2> Text block: {{ word['Text'] }} </h2>
+            <p> Text Block Details: {{ word }} </p>
+        {% endfor %}
+    </div>
 {% endblock %}
