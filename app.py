@@ -81,19 +81,31 @@ def upload():
             image.convert("RGB")
             file_name = './photos/' + user + '/' + file_name + '.jpg'
             image.save(file_name)
+            key = upload_file(user, file_name, None, str(form.filename.data), True)
             session = boto3.Session(
                 aws_access_key_id=AWS_ACCESS_KEY,
                 aws_secret_access_key=AWS_SECRET_KEY,
                 aws_session_token=AWS_SESSION_TOKEN,
                 region_name='us-east-1'
                 )
-            client = session.client('textract')
-            textract = textract_wrapper.TextractWrapper(client, None, None)
-            response = textract.detect_file_text(document_file_name=file_name)
+
+            client = session.client('lambda')
+            input = {"user": user, "file": str(form.filename.data), "access_key": rf'{AWS_ACCESS_KEY}', "secret_key": rf'{AWS_SECRET_KEY}', "session_token": rf'{AWS_SESSION_TOKEN}'}
+            response = client.invoke(FunctionName='get_text', InvocationType='RequestResponse', Payload=json.dumps(input))
+            data = response['Payload'].read()
+            # session = boto3.Session(
+            #     aws_access_key_id=AWS_ACCESS_KEY,
+            #     aws_secret_access_key=AWS_SECRET_KEY,
+            #     aws_session_token=AWS_SESSION_TOKEN,
+            #     region_name='us-east-1'
+            #     )
+            # client = session.client('textract')
+            # textract = textract_wrapper.TextractWrapper(client, None, None)
+            # response = textract.detect_file_text(document_file_name=file_name)
             #for item in response['Blocks']:
             #    if item["BlockType"] == "LINE":
             #        print('\033[92m' + item['Text'] + '\033[92m')
-            blocks = response['Blocks']
+            blocks = data.decode('utf-8')
             upload_file(user, file_name, blocks, str(form.filename.data))
     return render_template('upload.html', form=form, file_list=file_list)
 
