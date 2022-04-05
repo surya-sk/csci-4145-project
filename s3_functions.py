@@ -4,8 +4,10 @@ from boto3.session import Session
 import matplotlib.image as mpimg
 from PIL import Image
 
-access_key = 'AKIA4I7AUGAGW3FOIMXN'
-secret_key = '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'
+with open("credentials.json") as f:
+    creds_json = json.load(f)
+access_key = creds_json['s3_access_key']
+secret_key = creds_json['s3_secret_key']
 
 def upload_file(username, file_name, blocks, folder_name, temp=False):
     client = boto3.client('s3', aws_access_key_id=access_key,

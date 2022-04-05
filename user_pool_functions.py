@@ -1,9 +1,14 @@
 import boto3
+import json
+
+with open("credentials.json") as f:
+    creds_json = json.load(f)
+Client_id = creds_json['user_pools_client_id']
 
 def signup_user(email, username, password):
     client = boto3.client('cognito-idp', region_name='us-east-1')
     response = client.sign_up(
-        ClientId = '6603uqjecfj36n3r9r7pk5m9q',
+        ClientId = Client_id,
         Username = username,
         Password = password,
         UserAttributes = [{'Name': 'email', 'Value': email}]
@@ -14,7 +19,7 @@ def signup_user(email, username, password):
 def verify_user(username, code):
     client = boto3.client('cognito-idp', region_name='us-east-1')
     response = client.confirm_sign_up(
-        ClientId = '6603uqjecfj36n3r9r7pk5m9q',
+        ClientId = Client_id,
         Username = username,
         ConfirmationCode = code
     )
@@ -22,7 +27,7 @@ def verify_user(username, code):
 def login_user(username, password):
     client = boto3.client('cognito-idp', region_name='us-east-1')
     response = client.initiate_auth(
-        ClientId='6603uqjecfj36n3r9r7pk5m9q',
+        ClientId= Client_id,
         AuthFlow='USER_PASSWORD_AUTH',
         AuthParameters={
             'USERNAME': username,
@@ -39,4 +44,4 @@ def login_user(username, password):
     else:
         return False
 
-#Abcdef123!
+# password for test user account: Abcdef123!
