@@ -90,7 +90,7 @@ def upload():
                 )
 
             client = session.client('lambda')
-            input = {"user": user, "file": str(form.filename.data), "access_key": rf'{AWS_ACCESS_KEY}', "secret_key": rf'{AWS_SECRET_KEY}', "session_token": rf'{AWS_SESSION_TOKEN}'}
+            input = {"user": user, "file": str(form.filename.data)}
             response = client.invoke(FunctionName='get_text', InvocationType='RequestResponse', Payload=json.dumps(input))
             data = response['Payload'].read()
             # blocks = json.dumps(json.JSONDecoder().decode(data.decode('utf-8')))
