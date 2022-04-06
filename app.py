@@ -63,8 +63,8 @@ def signup():
 def upload():
     global user
     file_list = []
-    if request.method == 'GET':
-        file_list = get_files(user)
+    # if request.method == 'GET':
+    file_list = get_files(user)
 
     form = UploadFileForm()
     file_name = form.filename.data
@@ -82,6 +82,7 @@ def upload():
             file_name = './photos/' + user + '/' + file_name + '.jpg'
             image.save(file_name)
             key = upload_file(user, file_name, None, str(form.filename.data), True)
+
             session = boto3.Session(
                 aws_access_key_id=AWS_ACCESS_KEY,
                 aws_secret_access_key=AWS_SECRET_KEY,
@@ -93,20 +94,28 @@ def upload():
             input = {"user": user, "file": str(form.filename.data), "access_key": rf'{AWS_ACCESS_KEY}', "secret_key": rf'{AWS_SECRET_KEY}', "session_token": rf'{AWS_SESSION_TOKEN}'}
             response = client.invoke(FunctionName='get_text', InvocationType='RequestResponse', Payload=json.dumps(input))
             data = response['Payload'].read()
-            # session = boto3.Session(
-            #     aws_access_key_id=AWS_ACCESS_KEY,
-            #     aws_secret_access_key=AWS_SECRET_KEY,
-            #     aws_session_token=AWS_SESSION_TOKEN,
-            #     region_name='us-east-1'
-            #     )
-            # client = session.client('textract')
-            # textract = textract_wrapper.TextractWrapper(client, None, None)
-            # response = textract.detect_file_text(document_file_name=file_name)
-            #for item in response['Blocks']:
-            #    if item["BlockType"] == "LINE":
-            #        print('\033[92m' + item['Text'] + '\033[92m')
+            # blocks = json.dumps(json.JSONDecoder().decode(data.decode('utf-8')))
+            blocks = json.loads(data.decode('utf-8'))
+
+            """
+            session = boto3.Session(
+                 aws_access_key_id=AWS_ACCESS_KEY,
+                 aws_secret_access_key=AWS_SECRET_KEY,
+                 aws_session_token=AWS_SESSION_TOKEN,
+                 region_name='us-east-1'
+                 )
+            client = session.client('textract')
+            textract = textract_wrapper.TextractWrapper(client, None, None)
+            response = textract.detect_file_text(document_file_name=file_name)
+            for item in response['Blocks']:
+                if item["BlockType"] == "LINE":
+                    print('\033[92m' + item['Text'] + '\033[92m')
             blocks = data.decode('utf-8')
+            blocks = data
+            blocks = response['Blocks']
+            """
             upload_file(user, file_name, blocks, str(form.filename.data))
+            file_list = get_files(user)
     return render_template('upload.html', form=form, file_list=file_list)
 
 @app.route('/showFile', methods=['GET'])
@@ -149,4 +158,4 @@ if __name__ == '__main__':
     AWS_ACCESS_KEY = creds_json['access_key']
     AWS_SECRET_KEY = creds_json['secret_key']
     AWS_SESSION_TOKEN = creds_json['session_token']
-    app.run(debug=True)
+    app.run(debug=True, port=3000, host='0.0.0.0')

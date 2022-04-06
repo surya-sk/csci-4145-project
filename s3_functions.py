@@ -23,7 +23,7 @@ def upload_file(username, file_name, blocks, folder_name, temp=False):
         response = client.upload_file(file_name, Bucket=bucket, Key=file_key)
 
         file_key = username + '/' + folder_name + '/textractObj'
-        response = client.put_object(Bucket=bucket, Key=file_key, Body=(bytes(json.dumps(blocks).encode('UTF-8'))))
+        response = client.put_object(Bucket=bucket, Key=file_key, Body=(json.dumps(blocks)))
 
         return response
 
@@ -49,6 +49,11 @@ def getS3File(username, file):
 
     textract_obj = s3_client.get_object(Bucket='4145project', Key=username + '/' + file + '/textractObj')
     textract_obj = json.loads(textract_obj['Body'].read().decode('utf-8'))
+    textract_obj = textract_obj['body']
+    print(textract_obj)
+    print(type(textract_obj))
+    textract_obj = json.loads(textract_obj)
+
     del textract_obj[0]   # the first element describes the size of the page. This is not relevant to our application
     for element in textract_obj:
         print(element)
