@@ -1,8 +1,5 @@
 import json
 import boto3
-from boto3.session import Session
-import matplotlib.image as mpimg
-from PIL import Image
 
 with open("credentials.json") as f:
     creds_json = json.load(f)
@@ -55,9 +52,6 @@ def getS3File(username, file):
     textract_obj = json.loads(textract_obj)
 
     del textract_obj[0]   # the first element describes the size of the page. This is not relevant to our application
-    for element in textract_obj:
-        print(element)
-        print(element['Text'])
 
     return textract_obj
 

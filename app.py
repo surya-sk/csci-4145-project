@@ -5,7 +5,6 @@ from wtforms import StringField, PasswordField, FileField
 from wtforms.validators import InputRequired, Email, Length
 import os
 import boto3
-import textract_wrapper
 from s3_functions import upload_file, get_files, getS3File
 import json
 from PIL import Image
@@ -62,8 +61,6 @@ def signup():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     global user
-    file_list = []
-    # if request.method == 'GET':
     file_list = get_files(user)
 
     form = UploadFileForm()
@@ -93,26 +90,8 @@ def upload():
             input = {"user": user, "file": str(form.filename.data)}
             response = client.invoke(FunctionName='get_text', InvocationType='RequestResponse', Payload=json.dumps(input))
             data = response['Payload'].read()
-            # blocks = json.dumps(json.JSONDecoder().decode(data.decode('utf-8')))
             blocks = json.loads(data.decode('utf-8'))
 
-            """
-            session = boto3.Session(
-                 aws_access_key_id=AWS_ACCESS_KEY,
-                 aws_secret_access_key=AWS_SECRET_KEY,
-                 aws_session_token=AWS_SESSION_TOKEN,
-                 region_name='us-east-1'
-                 )
-            client = session.client('textract')
-            textract = textract_wrapper.TextractWrapper(client, None, None)
-            response = textract.detect_file_text(document_file_name=file_name)
-            for item in response['Blocks']:
-                if item["BlockType"] == "LINE":
-                    print('\033[92m' + item['Text'] + '\033[92m')
-            blocks = data.decode('utf-8')
-            blocks = data
-            blocks = response['Blocks']
-            """
             upload_file(user, file_name, blocks, str(form.filename.data))
             file_list = get_files(user)
     return render_template('upload.html', form=form, file_list=file_list)
@@ -122,10 +101,6 @@ def show_file():
     file = request.args.get('file')
     global user
     textract_object = getS3File(user, file)
-        # from os.path import exists
-        # path = 'static/photos/' + user + '/image.jpg'
-        # file_exists = exists(path)
-        # if file_exists:
     return render_template('show_file.html', user=user, textract_object=textract_object)
 
 @app.route('/verify', methods=['GET', 'POST'])
