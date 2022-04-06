@@ -84,9 +84,8 @@ def upload():
             key = upload_file(user, file_name, None, str(form.filename.data), True)
 
             session = boto3.Session(
-                aws_access_key_id=AWS_ACCESS_KEY,
-                aws_secret_access_key=AWS_SECRET_KEY,
-                aws_session_token=AWS_SESSION_TOKEN,
+                aws_access_key_id=creds_json['s3_access_key'],
+                aws_secret_access_key=creds_json['s3_secret_key'],
                 region_name='us-east-1'
                 )
 
