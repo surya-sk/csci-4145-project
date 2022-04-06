@@ -1,0 +1,12 @@
+{
+  "AWSEBDockerrunVersion": "2",
+  "Image": {
+    "Name": "grantsutherland/4145project:latest"
+  },
+  "portMappings": [
+    {
+      "hostPort": 3000,
+      "containerPort": 3000
+    }
+  ]
+}
